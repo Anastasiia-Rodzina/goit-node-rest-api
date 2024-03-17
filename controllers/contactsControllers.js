@@ -1,14 +1,16 @@
 import HttpError from "../helpers/HttpError.js";
-import * as contactsService from "../services/contactsServices.js";
+// import * as contactsService from "../services/contactsServices.js";
+
+import Contact from "../models/contact.js";
 
 export const getAllContacts = async (req, res) => {
-  const result = await contactsService.listContacts();
+  const result = await Contact.find();
   res.status(200).json(result);
 };
 
 export const getOneContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.getContactById(id);
+  const result = await Contact.findById(id);
   if (!result) {
     throw HttpError(404);
   }
@@ -17,7 +19,7 @@ export const getOneContact = async (req, res) => {
 
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const result = await contactsService.removeContact(id);
+  const result = await Contact.findByIdAndDelete(id);
   if (!result) {
     throw HttpError(404);
   }
@@ -25,7 +27,7 @@ export const deleteContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-  const result = await contactsService.addContact(req.body);
+  const result = await Contact.create(req.body);
   res.status(201).json(result);
 };
 
@@ -34,7 +36,19 @@ export const updateContact = async (req, res) => {
   if (req.body.length === 0) {
     throw HttpError(400, "Body must have at least one field");
   }
-  const result = await contactsService.updateContact(id, req.body);
+  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  if (!result) {
+    throw HttpError(404);
+  }
+  res.status(200).json(result);
+};
+
+export const updateStatusContact = async (req, res) => {
+  const { id } = req.params;
+  if (req.body.length === 0) {
+    throw HttpError(400, "Body must have at least one field");
+  }
+  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
   if (!result) {
     throw HttpError(404);
   }
