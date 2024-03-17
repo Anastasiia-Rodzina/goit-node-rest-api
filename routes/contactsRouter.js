@@ -24,11 +24,7 @@ contactsRouter.get("/:id", isValidId, ctrlWrapper(getOneContact));
 
 contactsRouter.delete("/:id", isValidId, ctrlWrapper(deleteContact));
 
-contactsRouter.post(
-  "/",
-  // validateBody(createContactSchema),
-  ctrlWrapper(createContact)
-);
+contactsRouter.post("/", ctrlWrapper(createContact));
 
 contactsRouter.put(
   "/:id",
