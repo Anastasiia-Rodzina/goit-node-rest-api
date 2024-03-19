@@ -1,6 +1,4 @@
 import HttpError from "../helpers/HttpError.js";
-// import * as contactsService from "../services/contactsServices.js";
-
 import Contact from "../models/contact.js";
 
 export const getAllContacts = async (req, res) => {
@@ -33,9 +31,6 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   const { id } = req.params;
-  if (req.body.length === 0) {
-    throw HttpError(400, "Body must have at least one field");
-  }
   const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
   if (!result) {
     throw HttpError(404);
@@ -45,9 +40,6 @@ export const updateContact = async (req, res) => {
 
 export const updateStatusContact = async (req, res) => {
   const { id } = req.params;
-  if (req.body.length === 0) {
-    throw HttpError(400, "Body must have at least one field");
-  }
   const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
   if (!result) {
     throw HttpError(404);
