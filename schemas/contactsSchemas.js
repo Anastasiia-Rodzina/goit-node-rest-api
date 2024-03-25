@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { emailRegexp } from "../models/users.js";
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
@@ -16,4 +17,18 @@ export const updateContactSchema = Joi.object({
 
 export const updateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required(),
+});
+
+export const registerSchema = Joi.object({
+  password: Joi.string().required(),
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
+export const loginSchema = Joi.object({
+  password: Joi.string().required(),
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
+export const subscriptSchema = Joi.object({
+  subscription: Joi.string().required(),
 });
