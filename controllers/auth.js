@@ -16,8 +16,10 @@ export const register = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({ ...req.body, password: hashPassword });
   res.status(201).json({
-    email: newUser.email,
-    subscription: newUser.subscription,
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
   });
 };
 export const login = async (req, res) => {
@@ -39,8 +41,10 @@ export const login = async (req, res) => {
   await User.findByIdAndUpdate(user._id, { token });
   res.status(200).json({
     token,
-    email: user.email,
-    subscription: user.subscription,
+    user: {
+      email: user.email,
+      subscription: user.subscription,
+    },
   });
 };
 
@@ -55,7 +59,7 @@ export const getCurrent = async (req, res) => {
 export const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
-  res.status(204);
+  res.status(204).end();
 };
 
 export const updateSubscript = async (req, res) => {

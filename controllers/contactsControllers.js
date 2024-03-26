@@ -3,18 +3,22 @@ import Contact from "../models/contact.js";
 
 export const getAllContacts = async (req, res) => {
   const { _id: owner } = req.body;
-  const { page = 1, limit = 20 } = req.query;
+  const { page = 1, limit = 20, favorite } = req.query;
   const skip = (page - 1) * limit;
-  const result = await Contact.find({ owner }, { skip, limit }).populate(
-    "owner",
-    "email"
-  );
+  const favoriteFilter = favorite
+    ? { $and: [{ owner }, { favorite }] }
+    : { owner };
+  const result = await Contact.find(favoriteFilter).skip(skip).limit(limit);
+  if (!result) {
+    throw HttpError(404);
+  }
   res.status(200).json(result);
 };
 
 export const getOneContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findById(id);
+  const { _id: owner } = req.body;
+  const result = await Contact.findById(id, owner);
   if (!result) {
     throw HttpError(404);
   }
@@ -23,7 +27,8 @@ export const getOneContact = async (req, res) => {
 
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndDelete(id);
+  const { _id: owner } = req.body;
+  const result = await Contact.findByIdAndDelete(id, owner);
   if (!result) {
     throw HttpError(404);
   }
@@ -38,7 +43,10 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  const { _id: owner } = req.body;
+  const result = await Contact.findByIdAndUpdate(id, owner, req.body, {
+    new: true,
+  });
   if (!result) {
     throw HttpError(404);
   }
@@ -47,7 +55,10 @@ export const updateContact = async (req, res) => {
 
 export const updateStatusContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  const { _id: owner } = req.body;
+  const result = await Contact.findByIdAndUpdate(id, owner, req.body, {
+    new: true,
+  });
   if (!result) {
     throw HttpError(404);
   }
