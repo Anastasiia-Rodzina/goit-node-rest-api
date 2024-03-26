@@ -8,7 +8,10 @@ export const getAllContacts = async (req, res) => {
   const favoriteFilter = favorite
     ? { $and: [{ owner }, { favorite }] }
     : { owner };
-  const result = await Contact.find(favoriteFilter).skip(skip).limit(limit);
+  const result = await Contact.find(favoriteFilter)
+    .skip(skip)
+    .limit(limit)
+    .populate("owner", "name email");
   if (!result) {
     throw HttpError(404);
   }
